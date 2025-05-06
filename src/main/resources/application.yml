@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: spring-boot-circuit-breaker
+server:
+  port: 8080
+
+# Configuração do Circuit Breaker
+resilience4j:
+  circuitbreaker:
+    instances:
+      externalServiceBreaker:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  
+  # Configuração de Retry
+  retry:
+    instances:
+      externalServiceRetry:
+        maxAttempts: 3
+        waitDuration: 1000
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retryExceptions: java.lang.RuntimeException
+  
+  # Configuração de Bulkhead
+  bulkhead:
+    instances:
+      externalServiceBulkhead:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 500ms
+  
+  # Configuração de Rate Limiter
+  ratelimiter:
+    instances:
+      externalServiceRateLimiter:
+        limitForPeriod: 5
+        limitRefreshPeriod: 10s
+        timeoutDuration: 0
+  
+  # Configuração de Time Limiter
+  timelimiter:
+    instances:
+      externalServiceTimeLimiter:
+        timeoutDuration: 1s
+        cancelRunningFuture: true
+
+# Configuração do Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+  health:
+    circuitbreakers:
+      enabled: true
+    ratelimiters:
+      enabled: true
