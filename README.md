@@ -176,6 +176,17 @@ O dashboard atualiza automaticamente a cada 5 segundos, ou você pode atualizar 
 ./gradlew bootRun
 ```
 
+## Kubernetes
+
+Este projeto inclui configurações para implantação em um cluster Kubernetes. Os arquivos de configuração estão no diretório `kubernetes/`:
+
+- `deployment.yaml` - Define a implantação da aplicação
+- `service.yaml` - Define os serviços para expor a aplicação
+- `configmap.yaml` - Contém a configuração da aplicação
+- `ingress.yaml` - Define o ingress para acesso externo
+
+Para instruções detalhadas sobre como implantar a aplicação em um cluster Kubernetes, consulte o arquivo [kubernetes/README.md](kubernetes/README.md).
+
 ## Dependências
 
 - Spring Boot 3.4.5

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-circuit-breaker
+  labels:
+    app: spring-boot-circuit-breaker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-boot-circuit-breaker
+  template:
+    metadata:
+      labels:
+        app: spring-boot-circuit-breaker
+    spec:
+      containers:
+      - name: spring-boot-circuit-breaker
+        image: spring-boot-circuit-breaker:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: "0.5"
+            memory: "256Mi"
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 15
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config
+        env:
+        - name: SPRING_CONFIG_LOCATION
+          value: file:/app/config/application.yml
+      volumes:
+      - name: config-volume
+        configMap:
+          name: spring-boot-circuit-breaker-config
